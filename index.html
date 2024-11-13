@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Bot Pairing</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    .qr-container { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>WhatsApp Bot Pairing</h1>
+  <form id="pair-form">
+    <input type="text" id="phone-number" placeholder="Enter Phone Number" required />
+    <button type="submit">Generate Pairing QR</button>
+  </form>
+  <div class="qr-container" id="qr-container" style="display:none;">
+    <h3>Scan the QR Code:</h3>
+    <img id="qr-image" src="" alt="QR Code" />
+  </div>
+
+  <script>
+    document.getElementById('pair-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const phoneNumber = document.getElementById('phone-number').value;
+      
+      try {
+        const response = await fetch('/api/pair', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber })
+        });
+        
+        const data = await response.json();
+        
+        if (data.qr) {
+          document.getElementById('qr-container').style.display = 'block';
+          document.getElementById('qr-image').src = data.qr;
+        }
+      } catch (error) {
+        console.error('Error generating QR code:', error);
+      }
+    });
+  </script>
+</body>
+</html>
